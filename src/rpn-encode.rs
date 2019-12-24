@@ -14,11 +14,12 @@ fn main() -> std::io::Result<()> {
     for v in reader.split(b' ') {
         let v = v.expect("Failed to split");
         let s = std::str::from_utf8(&v).expect("Not utf8").trim();
-
-        if let Some((_, r)) = ["+", "-", "*"].iter().zip(DEFINES.iter()).find(|(e, _)| *e == &s) {
-            file.write(&r.to_ne_bytes()[..])?;
-        } else {
-            file.write(&s.parse::<Type>().expect("Can't parse").to_ne_bytes()[..])?;
+        if !s.is_empty() {
+            if let Some((_, r)) = ["+", "-", "*"].iter().zip(DEFINES.iter()).find(|(e, _)| *e == &s) {
+                file.write(&r.to_ne_bytes()[..])?;
+            } else {
+                file.write(&s.parse::<Type>().expect("Can't parse").to_ne_bytes()[..])?;
+            }
         }
     }
     Ok(())
