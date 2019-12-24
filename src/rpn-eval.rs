@@ -4,8 +4,8 @@ use std::fs::File;
 extern crate memmap;
 use memmap::{ Mmap, MmapOptions };
 
-mod defines;
-use defines::{ Type, DEFINES, STACK_SIZE, CHUNK_SIZE, SIZE };
+extern crate defines;
+use crate::defines::{ Type, DEFINES, STACK_SIZE, CHUNK_SIZE, SIZE };
 
 fn main() -> std::io::Result<()> {
     let file = File::open("input.txt")?;
