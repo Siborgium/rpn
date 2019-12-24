@@ -1,0 +1,23 @@
+[package]
+name = "rpn"
+version = "0.1.0"
+authors = ["Siborgium <antivirus147k@gmail.com>"]
+edition = "2018"
+
+[[bin]]
+name = "rpn-eval"
+path = "src/rpn-eval.rs"
+
+[[bin]]
+name = "rpn-encode"
+path = "src/rpn-encode.rs"
+
+[features]
+default = ["f32"]
+f32 = []
+f64 = []
+u32 = []
+u64 = []
+
+[dependencies]
+memmap = "0.7.0"
