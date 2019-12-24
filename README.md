@@ -3,4 +3,4 @@
 
 `rpn-eval` -- читает из файла, пишет результат в stdout.
 
-Подробнее -- [здесь]: https://www.linux.org.ru/forum/development/15422159
+Подробнее -- [здесь](https://www.linux.org.ru/forum/development/15422159)
