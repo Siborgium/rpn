@@ -28,5 +28,4 @@ u32 = []
 u64 = []
 
 [dependencies]
-memmap = "0.7.0"
 rand = "0.3"
