@@ -22,22 +22,30 @@ fn main() -> std::io::Result<()> {
         for chunk in chunks {
             let raw = unsafe { *(chunk.as_ptr() as *const [u8; SIZE]) };
             
-            let is_plus = raw == plus;
-            let is_minus = raw == minus;
-            let is_multiply = raw == multiply;
-            if is_plus || is_minus || is_multiply {
-                let b = stack.pop().expect("Pop failed");                
-                let a = stack.pop().expect("Pop failed");
-                let c = match (is_plus, is_minus, is_multiply) {
-                    (true, _, _) => a + b,
-                    (_, true, _) => a - b,
-                    (_, _, true) => a * b,
-                    _ => unsafe { std::hint::unreachable_unchecked() }
+            let is_op = ((raw == plus) as u8) // 0, 1, 2, 4
+                + (((raw == minus) as u8) << 1)
+                + (((raw == multiply) as u8) << 2);
+
+            if is_op == 0 {
+                stack.push(Type::from_ne_bytes(raw));
+            } else {
+                let b = if let Some(t) = stack.pop() {
+                    t
+                } else {
+                    unsafe { std::hint::unreachable_unchecked() }
+                };
+                let a = if let Some(t) = stack.pop() {
+                    t
+                } else {
+                    unsafe { std::hint::unreachable_unchecked() }
+                };
+                let c = match is_op {
+                    1 => a + b,
+                    2 => a - b,
+                    4 => a * b,
+                    _ => unsafe { std::hint::unreachable_unchecked() },
                 };
                 stack.push(c);
-            } else {
-                let v = Type::from_ne_bytes(raw);
-                stack.push(v);
             }
         }
         if buf.is_empty() {
