@@ -3,7 +3,7 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 
 extern crate defines;
-use crate::defines::{ Type, DEFINES, STACK_SIZE, CHUNK_SIZE, SIZE };
+use crate::defines::{ Raw, from_bits, to_bits, DEFINES, STACK_SIZE, CHUNK_SIZE, SIZE };
 
 fn main() -> std::io::Result<()> {
     let file = File::open("input.txt")?;
@@ -11,9 +11,9 @@ fn main() -> std::io::Result<()> {
 
     let mut stack = Vec::with_capacity(STACK_SIZE);
 
-    let plus = DEFINES[0].to_ne_bytes();
-    let minus = DEFINES[1].to_ne_bytes();
-    let multiply = DEFINES[2].to_ne_bytes();
+    let plus = to_bits(DEFINES[0]);
+    let minus = to_bits(DEFINES[1]);
+    let multiply = to_bits(DEFINES[2]);
 
     'running: loop {
         let buf = if let Ok(buf) = reader.fill_buf() {
@@ -24,14 +24,16 @@ fn main() -> std::io::Result<()> {
 
         let consumed = buf.len();
         for chunk in buf.chunks_exact(SIZE) {
-            let raw = unsafe { *(chunk.as_ptr() as *const [u8; SIZE]) };
+            let raw = unsafe { *(chunk.as_ptr() as *const Raw) };
             
             let is_op = ((raw == plus) as u8) // 0, 1, 2, 4
                 + (((raw == minus) as u8) << 1)
                 + (((raw == multiply) as u8) << 2);
 
+            
+            let c;
             if is_op == 0 {
-                stack.push(Type::from_ne_bytes(raw));
+                c = from_bits(raw)
             } else {
                 let b = if let Some(t) = stack.pop() {
                     t
@@ -43,14 +45,14 @@ fn main() -> std::io::Result<()> {
                 } else {
                     unsafe { std::hint::unreachable_unchecked() }
                 };
-                let c = match is_op {
+                c = match is_op {
                     1 => a + b,
                     2 => a - b,
                     4 => a * b,
                     _ => unsafe { std::hint::unreachable_unchecked() },
                 };
-                stack.push(c);
             }
+            stack.push(c);
         }
         if buf.is_empty() {
             break 'running;

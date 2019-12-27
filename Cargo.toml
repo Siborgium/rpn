@@ -39,3 +39,4 @@ u64 = []
 
 [dependencies]
 rand = "0.3"
+cfg-if = "0.1.10"
