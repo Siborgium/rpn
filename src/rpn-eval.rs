@@ -16,10 +16,14 @@ fn main() -> std::io::Result<()> {
     let multiply = DEFINES[2].to_ne_bytes();
 
     'running: loop {
-        let buf = reader.fill_buf()?;
+        let buf = if let Ok(buf) = reader.fill_buf() {
+            buf
+        } else {
+            unsafe { std::hint::unreachable_unchecked() }
+        };
+
         let consumed = buf.len();
-        let chunks = buf.chunks_exact(SIZE);
-        for chunk in chunks {
+        for chunk in buf.chunks_exact(SIZE) {
             let raw = unsafe { *(chunk.as_ptr() as *const [u8; SIZE]) };
             
             let is_op = ((raw == plus) as u8) // 0, 1, 2, 4
