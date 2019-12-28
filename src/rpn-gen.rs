@@ -3,7 +3,7 @@ extern crate rand;
 use crate::rand::{ Rng, thread_rng };
 
 extern crate defines;
-use crate::defines::{ Type };
+use crate::defines::norm;
 
 fn main() {
     let mut count = std::env::args().skip(1).next().expect("No args").parse::<usize>().expect("Can\'t parse");
@@ -22,7 +22,7 @@ fn main() {
             print!("{} ", op);
             terms = terms - 1;
         } else {
-            print!("{} ", rng.gen::<Type>().abs());
+            print!("{} ", norm(rng.gen()));
             terms = terms + 1;
             count = count - 1;
         }

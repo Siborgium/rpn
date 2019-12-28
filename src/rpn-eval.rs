@@ -60,6 +60,6 @@ fn main() -> std::io::Result<()> {
         reader.consume(consumed);
     }
     assert!(stack.len() == 1);
-    println!("{}", stack[0]);
+    println!("{:.}", stack[0]);
     Ok(())
 }
